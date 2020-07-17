@@ -6,6 +6,7 @@
 PlayScene::PlayScene()
 {
 	PlayScene::start();
+	
 }
 
 PlayScene::~PlayScene()
@@ -14,8 +15,10 @@ PlayScene::~PlayScene()
 void PlayScene::draw()
 {
 	drawDisplayList();
-
-	Util::DrawLine(m_pPlayer->getTransform()->position, m_pPlaneSprite->getTransform()->position);
+	if (m_bDebug) 
+	{
+		Util::DrawLine(m_pPlayer->getTransform()->position, m_pPlaneSprite->getTransform()->position);
+	}
 }
 
 void PlayScene::update()
@@ -107,10 +110,31 @@ void PlayScene::handleEvents()
 		}
 	}
 	
-
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_ESCAPE))
 	{
 		TheGame::Instance()->quit();
+	}
+
+	if (!m_bhPressed) 
+	{
+		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
+		{
+			m_bDebug = !m_bDebug;
+			m_bhPressed = true;
+			if (m_bDebug)
+			{
+				std::cout << "Debug On\n";
+			}
+			else if(!m_bDebug)
+			{
+				std::cout << "Debug off\n";
+			}
+		}
+	}
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H)) 
+	{
+		m_bhPressed = false;
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_1))
@@ -126,6 +150,8 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
+	m_bDebug = false;
+	m_bhPressed = false;
 	// Plane Sprite
 	m_pPlaneSprite = new Plane();
 	addChild(m_pPlaneSprite);

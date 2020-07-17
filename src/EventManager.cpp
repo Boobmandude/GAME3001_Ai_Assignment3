@@ -88,6 +88,7 @@ bool EventManager::isKeyDown(const SDL_Scancode key) const
 {
     if (m_keyStates != nullptr)
     {
+        //return (m_keystates[key] == 0) ? true : false;
         if (m_keyStates[key] == 1)
         {
             return true;
