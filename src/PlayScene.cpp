@@ -15,9 +15,12 @@ PlayScene::~PlayScene()
 void PlayScene::draw()
 {
 	drawDisplayList();
-	if (m_bDebug) 
+	if (m_bDebugMode) 
 	{
 		Util::DrawLine(m_pPlayer->getTransform()->position, m_pPlaneSprite->getTransform()->position);
+
+		Util::DrawRect(m_pPlayer->getTransform()->position - glm::vec2(m_pPlayer->getWidth() * 0.5f, m_pPlayer->getHeight() * 0.5f), m_pPlayer->getWidth(), m_pPlayer->getHeight());
+
 	}
 }
 
@@ -115,17 +118,17 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->quit();
 	}
 
-	if (!m_bhPressed) 
+	if (!m_bDebugKeys[H_KEY])
 	{
 		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 		{
-			m_bDebug = !m_bDebug;
-			m_bhPressed = true;
-			if (m_bDebug)
+			m_bDebugMode = !m_bDebugMode;
+			m_bDebugKeys[H_KEYS] = true;
+			if (m_bDebugMode)
 			{
 				std::cout << "Debug On\n";
 			}
-			else if(!m_bDebug)
+			else if(!m_bDebugMode)
 			{
 				std::cout << "Debug off\n";
 			}
@@ -134,7 +137,7 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_H)) 
 	{
-		m_bhPressed = false;
+		m_bDebugKeys[H_KEYS] = false;
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_1))
@@ -150,8 +153,7 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
-	m_bDebug = false;
-	m_bhPressed = false;
+	m_bDebugMode = false;
 	// Plane Sprite
 	m_pPlaneSprite = new Plane();
 	addChild(m_pPlaneSprite);

@@ -8,6 +8,7 @@
 #include "Button.h"
 #include "Obstacle.h"
 
+
 class PlayScene : public Scene
 {
 public:
@@ -29,8 +30,10 @@ private:
 
 	Obstacle* m_pObstacle;
 
-	bool m_bDebug;
-	bool m_bhPressed;
+	bool m_bDebugKeys[NUM_OF_DEBUG_KEYS];
+
+	bool m_bDebugMode;
+	bool m_bPatrolMode;
 };
 
 #endif /* defined (__PLAY_SCENE__) */
