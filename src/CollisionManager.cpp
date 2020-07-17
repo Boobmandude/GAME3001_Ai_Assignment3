@@ -2,7 +2,7 @@
 #include "Util.h"
 #include <algorithm>
 
-
+//Testing
 
 int CollisionManager::squaredDistance(const glm::vec2 p1, const glm::vec2 p2)
 {
