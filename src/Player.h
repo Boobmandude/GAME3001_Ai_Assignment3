@@ -19,12 +19,18 @@ public:
 
 
 	// setters
-	void setAnimationState(PlayerAnimationState new_state);
+	void setAnimationState(PlayerAnimationState new_state/*, int dir, bool moving*/);
+	void takeDamage(int damage);
+	int getHealth() { return m_iCurrHealth; }
 
 private:
 	void m_buildAnimations();
 
 	PlayerAnimationState m_currentAnimationState;
+
+	int m_iMaxHealth;
+	int m_iCurrHealth;
+
 };
 
 #endif /* defined (__PLAYER__) */
