@@ -17,7 +17,7 @@ PlayScene::~PlayScene()
 void PlayScene::draw()
 {
 	LVLMAN::Instance()->render(m_bDebugMode);
-	std::cout << (SDL_GetTicks() / 1000) << "\n";
+	//std::cout << (SDL_GetTicks() / 1000) << "\n";
 	drawDisplayList();
 	if (m_bDebugMode) 
 	{
@@ -58,7 +58,7 @@ void PlayScene::handleEvents()
 				m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT);
 				m_playerFacingRight = true;
 
-				m_pPlayer->getRigidBody()->velocity = glm::vec2(5.0f, 0.0f);
+				m_pPlayer->getRigidBody()->velocity = glm::vec2(3.0f, 0.0f);
 				m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
 				m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 			}
@@ -67,7 +67,7 @@ void PlayScene::handleEvents()
 				m_pPlayer->setAnimationState(PLAYER_RUN_LEFT);
 				m_playerFacingRight = false;
 
-				m_pPlayer->getRigidBody()->velocity = glm::vec2(-5.0f, 0.0f);
+				m_pPlayer->getRigidBody()->velocity = glm::vec2(-3.0f, 0.0f);
 				m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
 				m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 			}
@@ -95,7 +95,7 @@ void PlayScene::handleEvents()
 			m_pPlayer->setAnimationState(PLAYER_RUN_BACK);
 			m_playerFacingDown = false;
 			m_playerMoving = true;
-			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, -5.0f);
+			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, -3.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
 			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 
@@ -105,7 +105,7 @@ void PlayScene::handleEvents()
 			m_pPlayer->setAnimationState(PLAYER_RUN_FRONT);
 			m_playerFacingDown = true;
 			m_playerMoving = true;
-			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, 5.0f);
+			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, 3.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
 			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 
@@ -116,7 +116,7 @@ void PlayScene::handleEvents()
 			m_pPlayer->setAnimationState(PLAYER_RUN_LEFT);
 			m_playerFacingRight = false;
 			m_playerMoving = true;
-			m_pPlayer->getRigidBody()->velocity = glm::vec2(-5.0f, 0.0f);
+			m_pPlayer->getRigidBody()->velocity = glm::vec2(-3.0f, 0.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
 			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 		}
@@ -125,7 +125,7 @@ void PlayScene::handleEvents()
 			m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT);
 			m_playerFacingRight = true;
 			m_playerMoving = true;
-			m_pPlayer->getRigidBody()->velocity = glm::vec2(5.0f, 0.0f);
+			m_pPlayer->getRigidBody()->velocity = glm::vec2(3.0f, 0.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
 			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 		}
@@ -171,6 +171,7 @@ void PlayScene::handleEvents()
 			{
 				std::cout << "Debug off\n";
 			}
+			
 		}
 	}
 

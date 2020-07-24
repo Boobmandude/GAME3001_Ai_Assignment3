@@ -140,15 +140,19 @@ void LevelManager::loadLevel(std::string levelDataPath) //Passes the scene displ
 
 				m_level[row][col]->m_node = new PathNode((int)(m_level[row][col]->getTransform()->position.x + 16), (int)(m_level[row][col]->getTransform()->position.y + 16));
 
-				//m_level[row][col]->setPosX(m_level[row][col]->getTransform()->position.x);
-				//m_level[row][col]->setPosY(m_level[row][col]->getTransform()->position.y);
+				m_level[row][col]->setPosX(m_level[row][col]->getTransform()->position.x);
+				m_level[row][col]->setPosY(m_level[row][col]->getTransform()->position.y);
 				if (m_level[row][col]->getX() == 4 && m_level[row][col]->getY() == 1) //if the index nums match up to where the door tile is on the texture make the tile a door game object
 				{
 					//m_level[row][col]->setType(SPIKES);
 				}
-
+				if (m_level[row][col]->isObstacle()) 
+				{
+					m_level[row][col]->setType(OBSTACLE);
+				}
 				if (m_level[row][col]->isObstacle() || m_level[row][col]->isHazard()) //If tile is an obstacle add it to the obstacle list
 				{
+					
 					m_obstacles.push_back(m_level[row][col]);
 					m_level[row][col]->m_node->toggleNode();
 				}

@@ -159,6 +159,7 @@
     <ClCompile Include="..\src\Button.cpp" />
     <ClCompile Include="..\src\CollisionManager.cpp" />
     <ClCompile Include="..\src\LevelManager.cpp" />
+    <ClCompile Include="..\src\MathManager.cpp" />
     <ClCompile Include="..\src\Obstacle.cpp" />
     <ClCompile Include="..\src\Pathing.cpp" />
     <ClCompile Include="..\src\Sprite.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\src\Config.h" />
     <ClInclude Include="..\src\DebugKeys.h" />
     <ClInclude Include="..\src\LevelManager.h" />
+    <ClInclude Include="..\src\MathManager.h" />
     <ClInclude Include="..\src\Obstacle.h" />
     <ClInclude Include="..\src\Pathing.h" />
     <ClInclude Include="..\src\SoundType.h" />

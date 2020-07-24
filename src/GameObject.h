@@ -5,10 +5,18 @@
 #include "Transform.h"
 #include "RigidBody.h"
 #include <string>
-
+#include <vector>
 // enums
 #include "GameObjectType.h"
 
+enum ColDirections {
+	NOCOLLISION = 0,
+	EAST,
+	WEST,
+	NORTH,
+	SOUTH,
+	NUMOFSIDES
+};
 
 class GameObject {
 public:
@@ -33,12 +41,19 @@ public:
 	// getters and setters for game object properties
 	int getWidth() const;
 	int getHeight() const;
+	int getPosX() const;
+	int getPosY() const;
 	void setWidth(int new_width);
 	void setHeight(int new_height);
+	void setPosX(int new_posX);
+	void setPosY(int new_posY);
 	GameObjectType getType() const;
 	void setType(GameObjectType new_type);
+	bool checkLevelCollision(std::vector<GameObject*> listObstacles);
 	//virtual int& getHealth();
 	//virtual int& getDamage();
+
+	ColDirections m_boundHit = NOCOLLISION;
 private:
 	// transform component
 	Transform m_transform;
@@ -49,6 +64,8 @@ private:
 	// size variables
 	int m_width;
 	int m_height;
+	int m_posX;
+	int m_posY;
 	GameObjectType m_type;
 
 	int m_health;

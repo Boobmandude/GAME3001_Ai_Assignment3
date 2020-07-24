@@ -117,6 +117,9 @@
     <ClCompile Include="..\src\LevelManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MathManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -246,6 +249,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="..\src\LevelManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MathManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
   </ItemGroup>

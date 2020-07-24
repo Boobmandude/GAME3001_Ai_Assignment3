@@ -1,4 +1,5 @@
 #include "CollisionManager.h"
+#include "MathManager.h"
 #include "Util.h"
 #include <algorithm>
 
@@ -90,6 +91,58 @@ bool CollisionManager::AABBCheck(GameObject* object1, GameObject* object2)
 		return false;
 	}
 
+	return false;
+}
+
+bool CollisionManager::AABBCheckColliding(GameObject* object1, GameObject* object2)
+{
+	// prepare relevant variables
+	//glm::vec2 p1 = { object1->getPosX() - object1->getWidth() * 0.5, object1->getPosY() - object1->getHeight() * 0.5 }; //collision box to the top corner
+	
+	const auto p1 = object1->getTransform()->position - glm::vec2(object1->getWidth() * 0.5f, object1->getHeight() * 0.5f);
+	Util::DrawRect(p1, object1->getWidth(), object1->getHeight(), { 1,1,0,1 });
+	const auto p2 = object2->getTransform()->position;
+	const float p1Width = object1->getWidth();
+	const float p1Height = object1->getHeight();
+	float p2Width = object2->getWidth();
+	float p2Height = object2->getHeight();
+
+	int angle;
+
+	if (
+		p1.x < p2.x + p2Width &&
+		p1.x + p1Width > p2.x &&
+		p1.y < p2.y + p2Height &&
+		p1.y + p1Height > p2.y
+		)
+	{
+
+		angle = MAMA::AngleBetweenPoints(p1, p2);
+		if (angle > 45 && angle <= 135) //p2 is under p1
+		{
+			object1->getTransform()->position.y -= object1->getRigidBody()->velocity.y;
+			object1->m_boundHit = SOUTH; //BOTTOMBOUNDARY
+		}
+		if (angle > -135 && angle <= -45) //p2 is on top of p1
+		{
+			object1->getTransform()->position.y += object1->getRigidBody()->velocity.y;
+			object1->m_boundHit = NORTH; //TOPBOUNDARY
+		}
+		if (angle > -45 && angle <= 45) //p2 at the right of p1
+		{
+			object1->getTransform()->position.x -= object1->getRigidBody()->velocity.x;
+			object1->m_boundHit = EAST; //RIGHTBOUNDARY
+		}
+		if (angle > 135 || angle <= -135) //p2 at the left of p1
+		{
+			object1->getTransform()->position.x += object1->getRigidBody()->velocity.x;
+			object1->m_boundHit = WEST; //LEFTBOUNDARY
+		}
+
+		return true;
+
+	}
+	
 	return false;
 }
 

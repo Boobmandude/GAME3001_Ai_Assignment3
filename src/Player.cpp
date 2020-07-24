@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "TextureManager.h"
-
+#include "LevelManager.h"
 Player::Player(): m_currentAnimationState(PLAYER_IDLE_RIGHT)
 {
 	TextureManager::Instance()->loadSpriteSheet(
@@ -11,10 +11,10 @@ Player::Player(): m_currentAnimationState(PLAYER_IDLE_RIGHT)
 	setSpriteSheet(TextureManager::Instance()->getSpriteSheet("link"));
 	
 	// set frame width
-	setWidth(20);
+	setWidth(40);
 
 	// set frame height
-	setHeight(24);
+	setHeight(48);
 
 	getTransform()->position = glm::vec2(600.0f, 500.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
@@ -78,6 +78,9 @@ void Player::draw()
 
 void Player::update()
 {
+	setPosX(getTransform()->position.x);
+	setPosY(getTransform()->position.y);
+	checkLevelCollision(LVLMAN::Instance()->getObstacles());
 }
 
 void Player::clean()
