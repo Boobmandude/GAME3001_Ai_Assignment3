@@ -148,6 +148,38 @@ void TextureManager::draw(const std::string& id, const int x, const int y, const
 	SDL_RenderCopyEx(Renderer::Instance()->getRenderer(), m_textureMap[id].get(), &srcRect, &destRect, angle, nullptr, flip);
 }
 
+void TextureManager::drawTile(const std::string& id, int x, int y, int indexX, int indexY, const double angle, const int alpha, const bool centered, const SDL_RendererFlip flip)
+{
+	SDL_Rect srcRect;
+	SDL_Rect destRect;
+
+	srcRect.x = indexX * Config::TILE_SIZE;
+	srcRect.y = indexY * Config::TILE_SIZE;
+	//std::cout << "x "<< indexX << " y "<< indexY << "\n";
+	int textureWidth, textureHeight;
+
+	SDL_QueryTexture(m_textureMap[id].get(), nullptr, nullptr, &textureWidth, &textureHeight);
+
+	srcRect.w = Config::TILE_SIZE;
+	srcRect.h = Config::TILE_SIZE;
+	destRect.w = Config::TILE_SIZE;
+	destRect.h = Config::TILE_SIZE;
+
+	if (centered) {
+		const int xOffset = textureWidth * 0.5;
+		const int yOffset = textureHeight * 0.5;
+		destRect.x = x - xOffset;
+		destRect.y = y - yOffset;
+	}
+	else {
+		destRect.x = x;
+		destRect.y = y;
+	}
+
+	SDL_SetTextureAlphaMod(m_textureMap[id].get(), alpha);
+	SDL_RenderCopyEx(Renderer::Instance()->getRenderer(), m_textureMap[id].get(), &srcRect, &destRect, angle, nullptr, flip);
+}
+
 void TextureManager::drawFrame(const std::string& id, const int x, const int y, const int frame_width, 
 							   const int frame_height, int &current_row,
                                int &current_frame, int frame_number, int row_number, 
@@ -217,8 +249,8 @@ void TextureManager::animateFrames(int frame_width, int frame_height, const int 
 }
 
 void TextureManager::playAnimation(
-	const std::string& sprite_sheet_name, Animation& animation, 
-	int x, int y, float speed_factor, 
+	const std::string& sprite_sheet_name, Animation& animation,
+	int x, int y, float speed_factor,
 	double angle, int alpha, bool centered, SDL_RendererFlip flip)
 {
 	const auto totalFrames = animation.frames.size();
@@ -235,7 +267,11 @@ void TextureManager::playAnimation(
 			}
 		}
 	}
-
+	int scale = 1;
+	if (sprite_sheet_name == "link")
+	{
+		scale = 2;
+	}
 	SDL_Rect srcRect;
 	SDL_Rect destRect;
 
@@ -243,8 +279,8 @@ void TextureManager::playAnimation(
 	srcRect.y = 0;
 
 	// frame_height size
-	const auto textureWidth = animation.frames[animation.current_frame].w;
-	const auto textureHeight = animation.frames[animation.current_frame].h;
+	const auto textureWidth = animation.frames[animation.current_frame].w * scale;
+	const auto textureHeight = animation.frames[animation.current_frame].h * scale;
 
 	// starting point of the where we are looking
 	srcRect.x = animation.frames[animation.current_frame].x;

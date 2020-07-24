@@ -204,15 +204,6 @@ void Player::m_buildAnimations()
 	
 	setAnimation(bowLeftAnimation);
 
-	Animation bowRightAnimation = Animation();
-
-	bowRightAnimation.name = "bowRight";
-	bowRightAnimation.frames.push_back(getSpriteSheet()->getFrame("link-bowr-0"));
-	bowRightAnimation.frames.push_back(getSpriteSheet()->getFrame("link-bowr-1"));
-	bowRightAnimation.frames.push_back(getSpriteSheet()->getFrame("link-bowr-2"));
-
-	setAnimation(bowRightAnimation);
-
 	Animation bowFrontAnimation = Animation();
 
 	bowFrontAnimation.name = "bowFront";

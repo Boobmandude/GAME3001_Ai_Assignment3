@@ -108,6 +108,15 @@
     <ClCompile Include="..\src\BaseEnemy.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Pathing.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Tile.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LevelManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -229,6 +238,15 @@
     </ClInclude>
     <ClInclude Include="..\src\BaseEnemy.h">
       <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Pathing.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Tile.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LevelManager.h">
+      <Filter>Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

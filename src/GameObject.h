@@ -37,7 +37,8 @@ public:
 	void setHeight(int new_height);
 	GameObjectType getType() const;
 	void setType(GameObjectType new_type);
-
+	//virtual int& getHealth();
+	//virtual int& getDamage();
 private:
 	// transform component
 	Transform m_transform;
@@ -49,6 +50,9 @@ private:
 	int m_width;
 	int m_height;
 	GameObjectType m_type;
+
+	int m_health;
+	int m_damage;
 };
 
 #endif /* defined (__GAME_OBJECT__) */

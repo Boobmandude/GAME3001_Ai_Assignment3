@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "EventManager.h"
 #include "Util.h"
+#include "LevelManager.h"
 
 
 PlayScene::PlayScene()
@@ -15,6 +16,7 @@ PlayScene::~PlayScene()
 
 void PlayScene::draw()
 {
+	LVLMAN::Instance()->render(m_bDebugMode);
 	std::cout << (SDL_GetTicks() / 1000) << "\n";
 	drawDisplayList();
 	if (m_bDebugMode) 
@@ -190,6 +192,9 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
+	LVLMAN::Instance()->loadTiles("../Assets/sprites/Level1_Tiles.png", "tiles", "../Assets/sprites/TileData.txt");
+	LVLMAN::Instance()->loadLevel("../Assets/data/Level1.txt");
+
 	m_bDebugMode = false;
 	// Plane Sprite
 	m_pPlaneSprite = new Plane();

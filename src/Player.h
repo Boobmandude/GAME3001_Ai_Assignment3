@@ -21,15 +21,14 @@ public:
 	// setters
 	void setAnimationState(PlayerAnimationState new_state/*, int dir, bool moving*/);
 	void takeDamage(int damage);
-	int getHealth() { return m_iCurrHealth; }
+	//int& getHealth();
 
 private:
 	void m_buildAnimations();
 
 	PlayerAnimationState m_currentAnimationState;
 
-	int m_iMaxHealth;
-	int m_iCurrHealth;
+
 
 };
 
