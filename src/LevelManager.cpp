@@ -67,34 +67,34 @@ void LevelManager::render(bool debug)
 			{
 				if (m_level[row][col]->m_node->isOpen())
 				{
-					//Util::DrawRect({ m_level[row][col]->getPosX(), m_level[row][col]->getPosY() }, m_level[row][col]->getWidth(), m_level[row][col]->getHeight(), { 0.0f,0.0f,1.0f,1.0f });
+					Util::DrawRect({ m_level[row][col]->getPosX(), m_level[row][col]->getPosY() }, m_level[row][col]->getWidth(), m_level[row][col]->getHeight(), { 0.0f,0.0f,1.0f,1.0f });
 				}
 				else
 				{
-					//Util::DrawRect({ m_level[row][col]->getPosX(), m_level[row][col]->getPosY() }, m_level[row][col]->getWidth(), m_level[row][col]->getHeight(), { 1.0f,0.0f,0.0f,1.0f });
+					Util::DrawRect({ m_level[row][col]->getPosX(), m_level[row][col]->getPosY() }, m_level[row][col]->getWidth(), m_level[row][col]->getHeight(), { 1.0f,0.0f,0.0f,1.0f });
 				}
 			}
 		}
 	}
 
-	for (auto i : m_obstacles)
-	{
-		if (i->getType() == TILE)
-		{
-			i->draw();
+	//for (auto i : m_obstacles)
+	//{
+	//	if (i->getType() == TILE)
+	//	{
+	//		i->draw();
 
-		}
-		if (debug)
-		{
-			if (i->getType() == TILE)
-			{
-				//Util::DrawRect({ i->getPosX() /*- i->getWidth()*/, i->getPosY() /*- i->getHeight() */ }, i->getWidth() - 10, i->getHeight() - 10, { 1.0f,1.0f,1.0f,1.0f });
-			}
-			else {
-				//Util::DrawRect({ i->getPosX(), i->getPosY() }, i->getWidth(), i->getHeight(), { 1.0f,1.0f,1.0f,1.0f });
-			}
-		}
-	}
+	//	}
+	//	if (debug)
+	//	{
+	//		if (i->getType() == TILE)
+	//		{
+	//			Util::DrawRect({ i->getPosX() /*- i->getWidth()*/, i->getPosY() /*- i->getHeight() */ }, i->getWidth() - 10, i->getHeight() - 10, { 1.0f,1.0f,1.0f,1.0f });
+	//		}
+	//		else {
+	//			Util::DrawRect({ i->getPosX(), i->getPosY() }, i->getWidth(), i->getHeight(), { 1.0f,1.0f,1.0f,1.0f });
+	//		}
+	//	}
+	//}
 
 
 }
@@ -156,6 +156,7 @@ void LevelManager::loadLevel(std::string levelDataPath) //Passes the scene displ
 					m_obstacles.push_back(m_level[row][col]);
 					m_level[row][col]->m_node->toggleNode();
 				}
+				m_levelNodes.push_back(m_level[row][col]->m_node);
 			}
 		}
 	}
@@ -195,9 +196,14 @@ void LevelManager::printNodes()
 		{
 			if (m_level[row][col]->m_node != nullptr)
 			{
-				std::cout << "Node at x: " << m_level[row][col]->m_node->x << " y: " << m_level[row][col]->m_node->y << "\n";
+				//std::cout << "Node at x: " << m_level[row][col]->m_node->x << " y: " << m_level[row][col]->m_node->y << "\n";
 			}
 
 		}
 	}
+}
+
+std::vector<PathNode*>& LevelManager::getLevelNodes()
+{
+	return m_levelNodes;
 }

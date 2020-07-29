@@ -120,6 +120,9 @@
     <ClCompile Include="..\src\MathManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\HealthBar.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -253,6 +256,15 @@
     </ClInclude>
     <ClInclude Include="..\src\MathManager.h">
       <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HealthBar.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Directions.h">
+      <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ActionStates.h">
+      <Filter>Enums</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

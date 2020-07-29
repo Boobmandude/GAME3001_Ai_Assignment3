@@ -21,21 +21,39 @@ void PlayScene::draw()
 	drawDisplayList();
 	if (m_bDebugMode) 
 	{
-		Util::DrawLine(m_pPlayer->getTransform()->position, m_pPlaneSprite->getTransform()->position, {1,0,0,1});
+		Util::DrawLine(m_pPlayer->getTransform()->position, m_pEnemy->getTransform()->position, {1,0,0,1});
 
 		Util::DrawRect(m_pPlayer->getTransform()->position - glm::vec2(m_pPlayer->getWidth() * 0.5f, m_pPlayer->getHeight() * 0.5f), m_pPlayer->getWidth(), m_pPlayer->getHeight(), { 0,1,0,1 });
 
+		Util::DrawCircle(m_pEnemy->getTransform()->position, m_pEnemy->getRadius(), { 0,1,0,1 }, SYMMETRICAL);
+
 	}
-	//m_pTimer->draw();
+	for (auto node : m_pEnemy->getPath()) 
+	{
+		Util::DrawRect({ node->getTransform()->position.x - Config::TILE_SIZE * 0.5, node->getTransform()->position.y - Config::TILE_SIZE*0.5 }, Config::TILE_SIZE, Config::TILE_SIZE, { 0,1,0,1 });
+	}
+	
+	m_pEnemyCounter->setText("Enemies Remaining: " + std::to_string(m_totalEnemies));
+	m_pEnemyCounter->draw();
+	m_pTimer->draw();
 }
 
 void PlayScene::update()
 {
 	//startTime = SDL_GetTicks();
-	///time << SDL_GetTicks() - startTime;
+	time = std::to_string((SDL_GetTicks() - startTime)/1000);
+	for (auto i = 0; i < getList().size(); i++) 
+	{
+		int counter = 0;
+		if (getList()[i]->getType() == ENEMY) 
+		{
+			counter++;
+			m_totalEnemies = counter;
+		}
+	}
 	updateDisplayList();
-	//m_pTimer->setText(time.str());
-	CollisionManager::LOSCheck(m_pPlayer, m_pPlaneSprite, m_pObstacle);
+	m_pTimer->setText(time);
+	CollisionManager::LOSCheck(m_pPlayer, m_pEnemy, LVLMAN::Instance()->getObstacles());
 }
 
 void PlayScene::clean()
@@ -55,7 +73,7 @@ void PlayScene::handleEvents()
 			const auto deadZone = 10000;
 			if (EventManager::Instance().getGameController(0)->LEFT_STICK_X > deadZone)
 			{
-				m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT);
+				//m_pPlayer->setAnimationState(PLAYER_WALK_RIGHT);
 				m_playerFacingRight = true;
 
 				m_pPlayer->getRigidBody()->velocity = glm::vec2(3.0f, 0.0f);
@@ -64,7 +82,7 @@ void PlayScene::handleEvents()
 			}
 			else if (EventManager::Instance().getGameController(0)->LEFT_STICK_X < -deadZone)
 			{
-				m_pPlayer->setAnimationState(PLAYER_RUN_LEFT);
+				//m_pPlayer->setAnimationState(PLAYER_WALK_LEFT);
 				m_playerFacingRight = false;
 
 				m_pPlayer->getRigidBody()->velocity = glm::vec2(-3.0f, 0.0f);
@@ -75,11 +93,11 @@ void PlayScene::handleEvents()
 			{
 				if (m_playerFacingRight)
 				{
-					m_pPlayer->setAnimationState(PLAYER_IDLE_RIGHT);
+				//	m_pPlayer->setAnimationState(PLAYER_IDLE);
 				}
 				else
 				{
-					m_pPlayer->setAnimationState(PLAYER_IDLE_LEFT);
+					//m_pPlayer->setAnimationState(PLAYER_IDLE);
 				}
 			}
 		}
@@ -92,17 +110,16 @@ void PlayScene::handleEvents()
 
 		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
 		{
-			m_pPlayer->setAnimationState(PLAYER_RUN_BACK);
+			m_pPlayer->setAnimationState(PLAYER_WALK_BACK);
 			m_playerFacingDown = false;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, -3.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
 			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
-
 		}
 		else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
 		{
-			m_pPlayer->setAnimationState(PLAYER_RUN_FRONT);
+			m_pPlayer->setAnimationState(PLAYER_WALK_FRONT);
 			m_playerFacingDown = true;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, 3.0f);
@@ -113,7 +130,7 @@ void PlayScene::handleEvents()
 
 		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
 		{
-			m_pPlayer->setAnimationState(PLAYER_RUN_LEFT);
+			m_pPlayer->setAnimationState(PLAYER_WALK_LEFT);
 			m_playerFacingRight = false;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(-3.0f, 0.0f);
@@ -122,7 +139,7 @@ void PlayScene::handleEvents()
 		}
 		else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 		{
-			m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT);
+			m_pPlayer->setAnimationState(PLAYER_WALK_RIGHT);
 			m_playerFacingRight = true;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(3.0f, 0.0f);
@@ -132,23 +149,15 @@ void PlayScene::handleEvents()
 		else if(!m_playerMoving)
 		{
 			
-			if (m_playerFacingDown)
-			{
-				m_pPlayer->setAnimationState(PLAYER_IDLE_FRONT);
-			}
-			else
-			{ 
-				m_pPlayer->setAnimationState(PLAYER_IDLE_BACK);
-			}
+			
+			m_pPlayer->setAnimationState(PLAYER_IDLE);
+			
+		}
 
-			if (m_playerFacingRight)
-			{
-				m_pPlayer->setAnimationState(PLAYER_IDLE_RIGHT);
-			}
-			else if (!m_playerFacingRight)
-			{
-				m_pPlayer->setAnimationState(PLAYER_IDLE_LEFT);
-			}
+		if (EventManager::Instance().getMouseButton(0))
+		{
+			m_pPlayer->attack();
+			//m_pPlayer->setAnimationState(PLAYER_ATTACK_RIGHT);
 		}
 	}
 	
@@ -156,6 +165,8 @@ void PlayScene::handleEvents()
 	{
 		TheGame::Instance()->quit();
 	}
+
+
 
 	if (!m_bDebugKeys[H_KEY])
 	{
@@ -179,6 +190,14 @@ void PlayScene::handleEvents()
 	{
 		m_bDebugKeys[H_KEY] = false;
 	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P)) 
+	{
+		m_pEnemy->togglePatrol();
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_B)) 
+	{
+		m_pPlayer->takeDamage(10);
+	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_1))
 	{
@@ -198,20 +217,23 @@ void PlayScene::start()
 
 	m_bDebugMode = false;
 	// Plane Sprite
-	m_pPlaneSprite = new Plane();
-	addChild(m_pPlaneSprite);
+	
 
 	// Player Sprite
 	m_pPlayer = new Player();
 	addChild(m_pPlayer);
 	m_playerFacingRight = true;
 
+	m_pEnemy = new BaseEnemy(m_pPlayer);
+	addChild(m_pEnemy);
+
 	// Obstacle Texture
 	m_pObstacle = new Obstacle();
 	addChild(m_pObstacle);
 
-
-	const SDL_Color blue = { 0, 0, 255, 255 };
-	m_pTimer = new Label("", "Consolas", 80, blue, glm::vec2(400.0f, 40.0f));
+	const SDL_Color white = { 255, 255, 255, 255 };
+	m_pEnemyCounter = new Label("Enemies Remaining: ", "Consolas", 40, white, glm::vec2(400.0f, 500.0f));
+	
+	m_pTimer = new Label("", "Consolas", 80, white, glm::vec2(400.0f, 40.0f));
 	
 }

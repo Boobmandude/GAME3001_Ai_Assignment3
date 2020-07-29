@@ -278,6 +278,29 @@ bool CollisionManager::LOSCheck(DisplayObject* from, DisplayObject* to, DisplayO
 	return true;
 }
 
+bool CollisionManager::LOSCheck(DisplayObject* from, DisplayObject* to, std::vector<GameObject*> obstacle)
+{
+	auto lineStart = from->getTransform()->position;
+	auto lineEnd = to->getTransform()->position;
+	// aabb
+	for (int i = 0; i < obstacle.size(); i++) {
+		auto boxWidth = obstacle[i]->getWidth();
+		int halfBoxWidth = boxWidth * 0.5f;
+		auto boxHeight = obstacle[i]->getHeight();
+		int halfBoxHeight = boxHeight * 0.5f;
+		auto boxStart = obstacle[i]->getTransform()->position - glm::vec2(halfBoxWidth, halfBoxHeight);
+
+		if (lineRectCheck(lineStart, lineEnd, boxStart, boxWidth, boxHeight))
+		{
+			std::cout << "No LOS - Collision with Obstacle!" << std::endl;
+
+			return false;
+		}
+		return true;
+	}
+	
+}
+
 int CollisionManager::circleAABBsquaredDistance(const glm::vec2 circle_centre, int circle_radius, const glm::vec2 box_start, const int box_width, const int box_height)
 {
 	auto dx = std::max(box_start.x - circle_centre.x, 0.0f);
@@ -293,6 +316,90 @@ bool CollisionManager::circleAABBCheck(GameObject* object1, GameObject* object2)
 	// circle
 	const auto circleCentre = object1->getTransform()->position;
 	const int circleRadius = std::max(object1->getWidth() * 0.5f, object1->getHeight() * 0.5f);
+	// aabb
+	const auto boxWidth = object2->getWidth();
+	int halfBoxWidth = boxWidth * 0.5f;
+	const auto boxHeight = object2->getHeight();
+	int halfBoxHeight = boxHeight * 0.5f;
+
+	const auto boxStart = object2->getTransform()->position - glm::vec2(boxWidth * 0.5f, boxHeight * 0.5f);
+
+	if (circleAABBsquaredDistance(circleCentre, circleRadius, boxStart, boxWidth, boxHeight) <= (circleRadius * circleRadius))
+	{
+		if (!object2->getRigidBody()->isColliding) {
+
+			object2->getRigidBody()->isColliding = true;
+
+			const auto attackVector = object1->getTransform()->position - object2->getTransform()->position;
+			const auto normal = glm::vec2(0.0f, -1.0f);
+
+			const auto dot = Util::dot(attackVector, normal);
+			const auto angle = acos(dot / Util::magnitude(attackVector)) * Util::Rad2Deg;
+
+			switch (object2->getType()) {
+			case TARGET:
+				std::cout << "Collision with Planet!" << std::endl;
+				SoundManager::Instance().playSound("yay", 0);
+				break;
+			case SHIP:
+				{
+					SoundManager::Instance().playSound("thunder", 0);
+					auto velocityX = object1->getRigidBody()->velocity.x;
+					auto velocityY = object1->getRigidBody()->velocity.y;
+
+					if ((attackVector.x > 0 && attackVector.y < 0) || (attackVector.x < 0 && attackVector.y < 0))
+						// top right or top left
+					{
+						
+						if (angle <= 45)
+						{
+							object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+						}
+						else
+						{
+							object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+						}
+					}
+
+					if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
+						// bottom right or bottom left
+					{
+						if (angle <= 135)
+						{
+							object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+													}
+						else
+						{
+							object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+													}
+					}
+				}
+				
+
+				break;
+			default:
+				
+				break;
+			}
+
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		object2->getRigidBody()->isColliding = false;
+		return false;
+	}
+
+	return false;
+}
+
+bool CollisionManager::circleAABBCheck(GameObject* object1, GameObject* object2, int radius)
+{
+	// circle
+	const auto circleCentre = object1->getTransform()->position;
+	const int circleRadius = radius;
 	// aabb
 	const auto boxWidth = object2->getWidth();
 	int halfBoxWidth = boxWidth * 0.5f;

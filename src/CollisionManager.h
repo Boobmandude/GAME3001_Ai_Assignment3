@@ -25,9 +25,11 @@ public:
 	static bool lineAABBCheck(Ship* object1, GameObject* object2);
 
 	static bool LOSCheck(DisplayObject* from, DisplayObject* to, DisplayObject* obstacle);
+	static bool LOSCheck(DisplayObject* from, DisplayObject* to, std::vector<GameObject*> obstacle);
 
 	static int circleAABBsquaredDistance(glm::vec2 circle_centre, int circle_radius, glm::vec2 box_start, int box_width, int box_height);
 	static bool circleAABBCheck(GameObject* object1, GameObject* object2);
+	static bool circleAABBCheck(GameObject* object1, GameObject* object2, int radius);
 
 	static bool pointRectCheck(glm::vec2 point, glm::vec2 rect_start, float rect_width, float rect_height);
 	

@@ -316,6 +316,27 @@ void Util::DrawRect(glm::vec2 position, int width, int height, glm::vec4 colour)
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
+void Util::DrawHealth(glm::vec2 position, float width, float height, glm::vec4 colour)
+{
+	int r = floor(colour.r * 255.0f);
+	int g = floor(colour.g * 255.0f);
+	int b = floor(colour.b * 255.0f);
+	int a = floor(colour.a * 255.0f);
+
+	SDL_FRect rectangle;
+	rectangle.x = position.x;
+	rectangle.y = position.y;
+	rectangle.w = width;
+	rectangle.h = height;
+
+	const auto renderer = /* TheGame::Instance()->getRenderer()*/ Renderer::Instance()->getRenderer();
+
+	SDL_SetRenderDrawColor(renderer, r, g, b, a);
+	SDL_RenderFillRectF(renderer, &rectangle);
+	//SDL_RenderDrawRect(renderer, &rectangle);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
 void Util::DrawCircle(glm::vec2 centre, int radius, glm::vec4 colour, ShapeType type)
 {
 	int r = floor(colour.r * 255.0f);

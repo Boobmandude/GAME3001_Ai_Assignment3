@@ -3,8 +3,8 @@
 #define _PATHING_
 #include <SDL.h>
 #include <vector>
-
-class PathNode : public SDL_Point
+#include "GameObject.h"
+class PathNode : public GameObject
 {
 
 private:
@@ -12,12 +12,12 @@ private:
 	bool m_openNode;
 
 public:
-	PathNode(int x, int y);
+	PathNode(float x, float y);
 	~PathNode();
 
-	void update();
-
-	SDL_Point getPt() { return { x,y }; }
+	virtual void update()override;
+	virtual void clean()override;
+	virtual void draw()override;
 	double getCost() { return m_cost; }
 	void setCost(double cost) { m_cost = cost; }
 	void toggleNode() { m_openNode = !m_openNode; }

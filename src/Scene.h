@@ -27,6 +27,8 @@ public:
 	void updateDisplayList();
 	void drawDisplayList();
 
+	std::vector<DisplayObject*>& getList();
+
 private:
 	std::vector<DisplayObject*> m_displayList;
 };

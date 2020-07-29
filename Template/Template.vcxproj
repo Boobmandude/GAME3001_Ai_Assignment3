@@ -158,6 +158,7 @@
     <ClCompile Include="..\src\BaseEnemy.cpp" />
     <ClCompile Include="..\src\Button.cpp" />
     <ClCompile Include="..\src\CollisionManager.cpp" />
+    <ClCompile Include="..\src\HealthBar.cpp" />
     <ClCompile Include="..\src\LevelManager.cpp" />
     <ClCompile Include="..\src\MathManager.cpp" />
     <ClCompile Include="..\src\Obstacle.cpp" />
@@ -189,12 +190,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Animation.h" />
+    <ClInclude Include="..\src\ActionStates.h" />
     <ClInclude Include="..\src\BaseEnemy.h" />
     <ClInclude Include="..\src\Button.h" />
     <ClInclude Include="..\src\CollisionManager.h" />
     <ClInclude Include="..\src\CollisionShape.h" />
     <ClInclude Include="..\src\Config.h" />
     <ClInclude Include="..\src\DebugKeys.h" />
+    <ClInclude Include="..\src\Directions.h" />
+    <ClInclude Include="..\src\HealthBar.h" />
     <ClInclude Include="..\src\LevelManager.h" />
     <ClInclude Include="..\src\MathManager.h" />
     <ClInclude Include="..\src\Obstacle.h" />

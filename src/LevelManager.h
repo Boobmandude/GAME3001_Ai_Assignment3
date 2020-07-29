@@ -7,6 +7,7 @@
 #include <array>
 #include "Tile.h"
 #include "Config.h"
+#include "Pathing.h"
 class LevelManager
 {
 
@@ -38,7 +39,8 @@ public:
 	std::vector<GameObject*>& const getObstacles() { return m_obstacles; }
 	bool checkCollision(GameObject* obj, const int dX, const int dY);
 	void printNodes();
-
+	std::vector<PathNode*>& getLevelNodes();
+	
 private:
 
 	static LevelManager* s_pInstance;
@@ -51,6 +53,7 @@ private:
 	std::vector<GameObject*> m_obstacles;
 	std::array < std::array<Tile*, Config::COL_NUM>, Config::ROW_NUM> m_level;
 	std::vector<PathNode*> m_Nodes;
+	std::vector<PathNode*> m_levelNodes;
 };
 typedef LevelManager LVLMAN;
 #endif

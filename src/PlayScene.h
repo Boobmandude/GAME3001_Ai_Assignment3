@@ -3,7 +3,7 @@
 #define __PLAY_SCENE__
 
 #include "Scene.h"
-#include "Plane.h"
+#include "BaseEnemy.h"
 #include "Player.h"
 #include "Button.h"
 #include "Obstacle.h"
@@ -26,7 +26,7 @@ public:
 private:
 	glm::vec2 m_mousePosition;
 
-	Plane* m_pPlaneSprite;
+	BaseEnemy* m_pEnemy;
 	Player* m_pPlayer;
 	bool m_playerFacingRight;
 	bool m_playerFacingDown;
@@ -39,8 +39,11 @@ private:
 	bool m_bPatrolMode;
 
 	Label* m_pTimer;
+	Label* m_pEnemyCounter;
+	int m_totalEnemies;
+
 	Uint32 startTime;
-	std::stringstream time;
+	std::string time;
 };
 
 #endif /* defined (__PLAY_SCENE__) */

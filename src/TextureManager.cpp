@@ -268,7 +268,7 @@ void TextureManager::playAnimation(
 		}
 	}
 	int scale = 1;
-	if (sprite_sheet_name == "link")
+	if (sprite_sheet_name == "char" || sprite_sheet_name == "orc")
 	{
 		scale = 2;
 	}

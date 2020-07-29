@@ -1,9 +1,8 @@
 #include "Pathing.h"
 #include "EventManager.h"
-PathNode::PathNode(int x, int y)
+PathNode::PathNode(float x, float y)
 {
-	this->x = x;
-	this->y = y;
+	getTransform()->position = { x,y };
 	m_openNode = true;
 }
 
@@ -21,6 +20,12 @@ PathNode::~PathNode()
 void PathNode::update()
 {
 
+}
+void PathNode::clean()
+{
+}
+void PathNode::draw()
+{
 }
 //
 //void PathNode::addConnection(PathConnection* c) 

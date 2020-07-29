@@ -38,6 +38,22 @@ int GameObject::getPosY() const
 	return m_posY;
 }
 
+int GameObject::getHealth()
+{
+	return m_health;
+}
+
+int GameObject::getMaxHealth()
+{
+	return m_maxHealth;
+}
+
+void GameObject::takeDamage(int damage)
+{
+	m_health -= damage;
+	std::cout << "Dealt " << damage << " damage\n" << m_health <<"/"<< m_maxHealth << "\n";
+}
+
 GameObjectType GameObject::getType() const
 {
 	return m_type;

@@ -43,6 +43,10 @@ public:
 	int getHeight() const;
 	int getPosX() const;
 	int getPosY() const;
+	int getHealth();
+	int getMaxHealth();
+	void takeDamage(int damage);
+
 	void setWidth(int new_width);
 	void setHeight(int new_height);
 	void setPosX(int new_posX);
@@ -68,8 +72,11 @@ private:
 	int m_posY;
 	GameObjectType m_type;
 
+protected:
 	int m_health;
+	int m_maxHealth;
 	int m_damage;
+	int m_speed;
 };
 
 #endif /* defined (__GAME_OBJECT__) */
