@@ -73,10 +73,7 @@ private:
 	GameObjectType m_type;
 
 protected:
-	int m_health;
-	int m_maxHealth;
-	int m_damage;
-	int m_speed;
+
 };
 
 #endif /* defined (__GAME_OBJECT__) */

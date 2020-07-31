@@ -4,6 +4,7 @@
 #include "EventManager.h"
 #include "CollisionManager.h"
 #include "Util.h"
+#include "MathManager.h"
 Player::Player(): m_currentAnimationState(PLAYER_IDLE)
 {
 	TextureManager::Instance()->loadSpriteSheet(
@@ -30,6 +31,9 @@ Player::Player(): m_currentAnimationState(PLAYER_IDLE)
 	m_damage = 20;
 	m_buildAnimations();
 	m_healthBar = new HealthBar(this);
+	m_bAttack = false;
+	m_swordWidth = 20;
+	m_swordHeight = 32;
 }
 
 Player::~Player()
@@ -37,52 +41,8 @@ Player::~Player()
 
 void Player::draw()
 {
-	// alias for x and y
-	const auto x = getTransform()->position.x;
-	const auto y = getTransform()->position.y;
-	
-	// draw the player according to animation state
-	switch(m_currentAnimationState)
-	{
-	case PLAYER_IDLE:
-		TextureManager::Instance()->playAnimation("char", getAnimation("idle"),
-			x, y, 0.12f, 0, 255, true);			   
-		break;
-	case PLAYER_WALK_RIGHT:
-		TextureManager::Instance()->playAnimation("char", getAnimation("walk"),
-			x, y, 0.25f, 0, 255, true);			   
-		break;
-	case PLAYER_WALK_LEFT:
-		TextureManager::Instance()->playAnimation("char", getAnimation("walk"),
-			x, y, 0.25f, 0, 255, true, SDL_FLIP_HORIZONTAL);			   
-		break;									   
-	case PLAYER_WALK_FRONT:						   
-		TextureManager::Instance()->playAnimation("char", getAnimation("walkFront"),
-			x, y, 0.25f, 0, 255, true);			  
-		break;									  
-	case PLAYER_WALK_BACK:						  
-		TextureManager::Instance()->playAnimation("char", getAnimation("walkBack"),
-			x, y, 0.25f, 0, 255, true);
-		break;
-	case PLAYER_ATTACK_RIGHT:
-		TextureManager::Instance()->playAnimation("char", getAnimation("attack"),
-			x, y, 0.25f, 0, 255, true);
-		break;	
-	case PLAYER_ATTACK_LEFT:
-		TextureManager::Instance()->playAnimation("char", getAnimation("attack"),
-			x, y, 0.25f, 0, 255, true,SDL_FLIP_HORIZONTAL);	
-	case PLAYER_ATTACK_FRONT:
-		TextureManager::Instance()->playAnimation("char", getAnimation("attackFront"),
-			x, y, 0.25f, 0, 255, true);
-		break;
-	case PLAYER_ATTACK_BACK:
-		TextureManager::Instance()->playAnimation("char", getAnimation("attackBack"),
-			x, y, 0.25f, 0, 255, true);
-		break;
-	default:
-		break;
-	}
 
+	playAnimation();
 	m_healthBar->draw();
 	
 }
@@ -91,8 +51,37 @@ void Player::update()
 {
 	setPosX(getTransform()->position.x);
 	setPosY(getTransform()->position.y);
+	m_swordCollision = getTransform()->position;
 	checkLevelCollision(LVLMAN::Instance()->getObstacles());
+	if(m_bAttack)
+	{
+		attack();
+		playAnimation();
+		m_bAttack = false;
+	}
+	else if (!m_bAttack) {
+		if (getRigidBody()->velocity.x > 0)
+		{
+			setAnimationState(PLAYER_WALK_RIGHT);
+			m_swordCollision = { getTransform()->position.x, getTransform()->position.y };
+		}
+		else if (getRigidBody()->velocity.x < 0)
+		{
+			setAnimationState(PLAYER_WALK_LEFT);
+		}
+		if (getRigidBody()->velocity.y > 0)
+		{
+			setAnimationState(PLAYER_WALK_FRONT);
+		}
+		else if (getRigidBody()->velocity.y < 0)
+		{
+			setAnimationState(PLAYER_WALK_BACK);
+		}
+	}
+	//std::cout << "Player x " << getRigidBody()->velocity.x << " y " << getRigidBody()->velocity.y << "\n";
+	playAnimation();
 	m_healthBar->update();
+	getRigidBody()->velocity = { 0.0f,0.0f };
 }
 
 void Player::clean()
@@ -116,25 +105,120 @@ void Player::setAction(ActionStates action)
 
 void Player::attack()
 {
+	m_bAttack = true;
 	glm::vec2 mousePos = EventManager::Instance().getMousePosition();
 	glm::vec2 normal = Util::normalize(mousePos - getTransform()->position);
-	std::cout << normal.x <<"x y "<<normal.y << "\n";
-	if (mousePos.x > getTransform()->position.x) 
+	//std::cout << normal.x <<"x y "<<normal.y << "\n";
+	float angle = MAMA::AngleBetweenPoints(getTransform()->position, mousePos);
+	std::cout << angle << "\n";
+	if ( angle < 45 && angle > -45) 
 	{
 		setAnimationState(PLAYER_ATTACK_RIGHT);
+
 	}
-	else if (mousePos.x < getTransform()->position.x) 
+	else if ((angle < 180 && angle > 135 && angle > 0) || (angle > -180 && angle < -135 && angle < 0))
 	{
 		setAnimationState(PLAYER_ATTACK_LEFT);
-	}	
-	
-	if (mousePos.y > getTransform()->position.y) 
+	}
+	else if (angle > -135 && angle < -45)
+	{
+		setAnimationState(PLAYER_ATTACK_BACK);
+	}
+	else if (angle > 45 && angle > 0 && angle < 135)
 	{
 		setAnimationState(PLAYER_ATTACK_FRONT);
 	}
-	else if (mousePos.y < getTransform()->position.y) 
+
+
+}
+
+void Player::playAnimation()
+{
+	// alias for x and y
+	const auto x = getTransform()->position.x;
+	const auto y = getTransform()->position.y;
+
+	// draw the player according to animation state
+	switch (m_currentAnimationState)
 	{
-		setAnimationState(PLAYER_ATTACK_BACK);
+	case PLAYER_IDLE:
+		TextureManager::Instance()->playAnimation("char", getAnimation("idle"),
+			x, y, 0.12f, 0, 255, true);
+		break;
+	case PLAYER_WALK_RIGHT:
+		TextureManager::Instance()->playAnimation("char", getAnimation("walk"),
+			x, y, 0.25f, 0, 255, true);
+		break;
+	case PLAYER_WALK_LEFT:
+		TextureManager::Instance()->playAnimation("char", getAnimation("walk"),
+			x, y, 0.25f, 0, 255, true, SDL_FLIP_HORIZONTAL);
+		break;
+	case PLAYER_WALK_FRONT:
+		TextureManager::Instance()->playAnimation("char", getAnimation("walkFront"),
+			x, y, 0.25f, 0, 255, true);
+		break;
+	case PLAYER_WALK_BACK:
+		TextureManager::Instance()->playAnimation("char", getAnimation("walkBack"),
+			x, y, 0.25f, 0, 255, true);
+		break;
+	case PLAYER_ATTACK_RIGHT:
+		TextureManager::Instance()->playAnimation("char", getAnimation("attack"),
+			x, y, 0.25f, 0, 255, true);
+		break;
+	case PLAYER_ATTACK_LEFT:
+		TextureManager::Instance()->playAnimation("char", getAnimation("attack"),
+			x, y, 0.25f, 0, 255, true, SDL_FLIP_HORIZONTAL);
+		break;
+	case PLAYER_ATTACK_FRONT:
+		TextureManager::Instance()->playAnimation("char", getAnimation("attackFront"),
+			x, y, 0.25f, 0, 255, true);
+		break;
+	case PLAYER_ATTACK_BACK:
+		TextureManager::Instance()->playAnimation("char", getAnimation("attackBack"),
+			x, y, 0.25f, 0, 255, true);
+		break;
+	default:
+		break;
+	}
+}
+
+glm::vec2 Player::getWeaponPos()
+{
+	return m_swordCollision;
+}
+
+int Player::getSwordHeight()
+{
+	return m_swordHeight;
+}
+
+int Player::getSwordWidth()
+{
+	return m_swordWidth;
+}
+
+void Player::debugDraw()
+{
+	Util::DrawRect(getTransform()->position - glm::vec2(getWidth() * 0.5f,getHeight() * 0.5f), getWidth(),getHeight(), { 0,1,0,1 });
+
+	
+	switch (m_currentAnimationState)
+	{
+
+	case PLAYER_ATTACK_RIGHT:
+		Util::DrawRect((getWeaponPos() + glm::vec2{ 8,-16 }), getSwordWidth(), getSwordHeight(), { 0,1,0,1 });
+		break;
+	case PLAYER_ATTACK_LEFT:
+		Util::DrawRect((getWeaponPos() - glm::vec2{ 30,16 }), getSwordWidth(), getSwordHeight(), { 0,1,0,1 });
+		break;
+	case PLAYER_ATTACK_FRONT:
+		Util::DrawRect((getWeaponPos() + glm::vec2{ -16,8 }), getSwordHeight(), getSwordWidth(), { 0,1,0,1 });
+		break;
+	case PLAYER_ATTACK_BACK:
+		Util::DrawRect((getWeaponPos() - glm::vec2{ 16,30 }), getSwordHeight(), getSwordWidth(), { 0,1,0,1 });
+		break;
+	default:
+		break;
 	}
 }
 

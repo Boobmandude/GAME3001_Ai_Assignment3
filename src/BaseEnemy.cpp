@@ -22,7 +22,7 @@ BaseEnemy::BaseEnemy(GameObject* target)
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->isColliding = false;
-	getRigidBody()->maxSpeed = 5.0f;
+	getRigidBody()->maxSpeed = 2.0f;
 	setType(ENEMY);
 	m_detectionRadius = 100;
 	m_targetDetected = false;
@@ -34,6 +34,8 @@ BaseEnemy::BaseEnemy(GameObject* target)
 	m_maxHealth = 100;
 	m_health = m_maxHealth;
 	m_healthBar = new HealthBar(this);
+	m_currentState = PLAYER_IDLE;
+	m_bHit = false;
 }
 
 BaseEnemy::~BaseEnemy()
@@ -42,21 +44,32 @@ BaseEnemy::~BaseEnemy()
 void BaseEnemy::draw()
 {
 	// alias for x and y
-	const auto x = getTransform()->position.x;
-	const auto y = getTransform()->position.y;
 
 	// draw the plane sprite with simple propeller animation
-	TextureManager::Instance()->playAnimation("orc", getAnimation("walk"),x, y, 0.5f, m_angle, 255, true);
+	playAnimation();
+	
 	m_healthBar->draw();
 }
 
 void BaseEnemy::update()
 {
-	/*setPosX(getTransform()->position.x);
-	setPosY(getTransform()->position.y);*/
+	setPosX(getTransform()->position.x);
+	setPosY(getTransform()->position.y);
 	checkRadiusDetection();
-	moveToTarget();
+	if (m_patrolMode) 
+	{
+		moveToTarget();
+	}
+	else if (!m_patrolMode) 
+	{
+		setAnimationsState(PLAYER_IDLE);
+	}
+	if (m_bHit) 
+	{
+		setAnimationsState(PLAYER_HIT);
+	}
 	m_healthBar->update();
+	
 }
 
 void BaseEnemy::clean()
@@ -166,25 +179,25 @@ void BaseEnemy::buildClockwisPath()
 
 	//m_path.push_back(LVLMAN::Instance()->m_levelNodes[32]);
 
-	/*for (auto i = 33; i < Config::COL_NUM*2-1; i++)
+	for (auto i = 65; i < Config::COL_NUM*3-1; i++)
 	{
 		m_path.push_back(LVLMAN::Instance()->getLevelNodes()[i]);
-	}*/
+	}
 
 	for (auto i = 2; i < Config::ROW_NUM - 1; i++)
 	{
 		m_path.push_back(LVLMAN::Instance()->getLevelNodes()[i * Config::COL_NUM + Config::COL_NUM - 2]);
 	}
 
-	/*for (auto i = 33; i < Config::COL_NUM*2-2; i++)
+	for (auto i = 33; i < Config::COL_NUM*2-2; i++)
 	{
 		m_path.push_back(LVLMAN::Instance()->getLevelNodes()[Config::COL_NUM * Config::ROW_NUM - 2 - i]);
-	}*/
+	}
 
-	/*for (auto i = Config::ROW_NUM - 2; i > 0; i--)
+	for (auto i = Config::ROW_NUM - 2; i > 1; i--)
 	{
 		m_path.push_back(LVLMAN::Instance()->getLevelNodes()[i * Config::COL_NUM + 1]);
-	}*/
+	}
 }
 
 void BaseEnemy::m_displayPath()
@@ -203,31 +216,37 @@ std::vector<PathNode*>& BaseEnemy::getPath()
 
 void BaseEnemy::moveToTarget()
 {
-	if (m_patrolMode)
-	{
+
 		m_pTargetPathNode = m_path[m_targetPathNodeIndex];
-		glm::vec2 targetVector = Util::normalize(m_pTargetPathNode->getTransform()->position - this->getTransform()->position);
+		auto targetVector = Util::normalize(m_pTargetPathNode->getTransform()->position - getTransform()->position);
+		//std::cout << "enemy posistion" << getTransform()->position.x << "x y " << getTransform()->position.y << "\n";
+		//std::cout << "target node position" <<m_pTargetPathNode->getTransform()->position.x << "x y " << m_pTargetPathNode->getTransform()->position.y << "\n";
+		//std::cout << "target vector " << targetVector.x << "x y " << targetVector.y << "\n";
+		
+		if (targetVector.x == 1)
+		{
+			setAnimationsState(PLAYER_WALK_RIGHT);
+		}
+		else if (targetVector.x == -1)
+		{
+			setAnimationsState(PLAYER_WALK_LEFT);
+		}
+		if (targetVector.y == 1)
+		{
+			setAnimationsState(PLAYER_WALK_FRONT);
+		}
+		else if (targetVector.y == -1)
+		{
+			setAnimationsState(PLAYER_WALK_BACK);
+		}
+		//std::cout << "velocity before" << getRigidBody()->velocity.x << "x y " << getRigidBody()->velocity.y << "\n";
 
-		if (targetVector.x = 1)
-		{
-			m_angle = 90.0f;
-		}
-		else if (targetVector.x = -1)
-		{
-			m_angle = -90.0f;
-		}
-		if (targetVector.y = 1)
-		{
-			m_angle = 180.0f;
-		}
-		else if (targetVector.y = -1)
-		{
-			m_angle = 0;
-		}
-
-		getRigidBody()->velocity = targetVector;
+		getRigidBody()->velocity= targetVector;
+		
+		//std::cout << "velocity after" << getRigidBody()->velocity.x << "x y " << getRigidBody()->velocity.y << "\n";
+		
 		getTransform()->position += getRigidBody()->velocity * getRigidBody()->maxSpeed;
-
+		//std::cout << "position " << getTransform()->position.x << "x y " << getTransform()->position.y << "\n";
 		if (getTransform()->position == m_pTargetPathNode->getTransform()->position)
 		{
 			m_targetPathNodeIndex++;
@@ -236,7 +255,8 @@ void BaseEnemy::moveToTarget()
 				m_targetPathNodeIndex = 0;
 			}
 		}
-	}
+	
+
 }
 
 void BaseEnemy::setAngle(float angle)
@@ -247,6 +267,11 @@ void BaseEnemy::setAngle(float angle)
 void BaseEnemy::togglePatrol()
 {
 	m_patrolMode = !m_patrolMode;
+}
+
+void BaseEnemy::setAnimationsState(PlayerAnimationState new_state)
+{
+	m_currentState = new_state;
 }
 
 void BaseEnemy::checkRadiusDetection()
@@ -265,6 +290,37 @@ void BaseEnemy::checkRadiusDetection()
 int BaseEnemy::getRadius()
 {
 	return m_detectionRadius;
+}
+
+void BaseEnemy::playAnimation()
+{
+	const auto x = getTransform()->position.x;
+	const auto y = getTransform()->position.y;
+
+	switch (m_currentState)
+	{
+	case PLAYER_IDLE:
+		TextureManager::Instance()->playAnimation("orc", getAnimation("idle"), x, y, 0.5f, 0, 255, true);
+		break;
+	case PLAYER_WALK_RIGHT:
+		TextureManager::Instance()->playAnimation("orc", getAnimation("walk"), x, y, 0.5f, 0, 255, true);
+		break;
+	case PLAYER_WALK_LEFT:
+		TextureManager::Instance()->playAnimation("orc", getAnimation("walk"), x, y, 0.5f, 0, 255, true, SDL_FLIP_HORIZONTAL);
+		break;
+	case PLAYER_WALK_FRONT:
+		TextureManager::Instance()->playAnimation("orc", getAnimation("walkFront"), x, y, 0.5f, 0, 255, true);
+		break;
+	case PLAYER_WALK_BACK:
+		TextureManager::Instance()->playAnimation("orc", getAnimation("walkBack"), x, y, 0.5f, 0, 255, true);
+		break;
+	case PLAYER_HIT:
+		TextureManager::Instance()->playAnimation("orc", getAnimation("hit"), x, y, 0.5f, 0, 255, true);
+		break;
+	case PLAYER_DEAD:
+		TextureManager::Instance()->playAnimation("orc", getAnimation("dead"), x, y, 0.5f, 0, 255, true);
+		break;
+	}
 }
 
 void BaseEnemy::checkLOS()

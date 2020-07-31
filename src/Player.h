@@ -25,8 +25,12 @@ public:
 	void setDirection(ColDirections direction);
 	void setAction(ActionStates action);
 	void attack();
+	void playAnimation();
+	glm::vec2 getWeaponPos();
+	int getSwordHeight();
+	int getSwordWidth();
 	//int& getHealth();
-
+	void debugDraw();
 private:
 	void m_buildAnimations();
 
@@ -36,6 +40,13 @@ private:
 	ColDirections m_facing;
 	ColDirections m_attackDir;
 	glm::vec2 m_mousePos;
+
+	glm::vec2 m_swordCollision;
+	int m_swordWidth;
+	int m_swordHeight;
+
+	bool m_bAttack;
+
 };
 
 #endif /* defined (__PLAYER__) */

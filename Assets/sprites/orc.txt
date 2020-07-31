@@ -29,5 +29,4 @@ orc-hit-0 64 445 16 19
 orc-hit-1 112 445 16 19
 orc-dead-0 16 494 16 18
 orc-dead-1 63 496 17 16
-orc-dead-2 111 496 17 16 
-
+orc-dead-2 111 496 17 16

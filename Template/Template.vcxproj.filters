@@ -266,5 +266,8 @@
     <ClInclude Include="..\src\ActionStates.h">
       <Filter>Enums</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Entity.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

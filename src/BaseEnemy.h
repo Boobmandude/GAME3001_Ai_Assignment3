@@ -6,6 +6,7 @@
 #include "Pathing.h"
 #include "HealthBar.h"
 #include "ActionStates.h"
+#include "PlayerAnimationState.h"
 class BaseEnemy : public Sprite
 {
 	
@@ -26,13 +27,14 @@ public:
 	void moveToTarget();
 	void setAngle(float angle);
 	void togglePatrol();
-
+	void setAnimationsState(PlayerAnimationState new_state);
 	void checkRadiusDetection();
 	int getRadius();
-
+	void playAnimation();
 	void checkLOS();
 private:
 	bool m_patrolMode;
+	bool m_bHit;
 	int m_targetPathNodeIndex;
 	PathNode* m_pTargetPathNode;
 	std::vector<PathNode*> m_path;
@@ -42,6 +44,7 @@ private:
 	GameObject* m_pTarget;
 	bool m_hasLOS;
 	HealthBar* m_healthBar;
+	PlayerAnimationState m_currentState;
 };
 
 #endif // !_BASE_ENEMY_

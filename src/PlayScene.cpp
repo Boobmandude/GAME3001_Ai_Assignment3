@@ -23,7 +23,7 @@ void PlayScene::draw()
 	{
 		Util::DrawLine(m_pPlayer->getTransform()->position, m_pEnemy->getTransform()->position, {1,0,0,1});
 
-		Util::DrawRect(m_pPlayer->getTransform()->position - glm::vec2(m_pPlayer->getWidth() * 0.5f, m_pPlayer->getHeight() * 0.5f), m_pPlayer->getWidth(), m_pPlayer->getHeight(), { 0,1,0,1 });
+		m_pPlayer->debugDraw();
 
 		Util::DrawCircle(m_pEnemy->getTransform()->position, m_pEnemy->getRadius(), { 0,1,0,1 }, SYMMETRICAL);
 
@@ -107,44 +107,40 @@ void PlayScene::handleEvents()
 	// handle player movement if no Game Controllers found
 	if (SDL_NumJoysticks() < 1)
 	{
-
+		
 		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
 		{
-			m_pPlayer->setAnimationState(PLAYER_WALK_BACK);
 			m_playerFacingDown = false;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, -3.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
-			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
+			//m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 		}
 		else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
 		{
-			m_pPlayer->setAnimationState(PLAYER_WALK_FRONT);
 			m_playerFacingDown = true;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(0.0f, 3.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
-			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
+			//m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 
 		}
 
 		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
 		{
-			m_pPlayer->setAnimationState(PLAYER_WALK_LEFT);
 			m_playerFacingRight = false;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(-3.0f, 0.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
-			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
+			//m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 		}
 		else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 		{
-			m_pPlayer->setAnimationState(PLAYER_WALK_RIGHT);
 			m_playerFacingRight = true;
 			m_playerMoving = true;
 			m_pPlayer->getRigidBody()->velocity = glm::vec2(3.0f, 0.0f);
 			m_pPlayer->getTransform()->position += m_pPlayer->getRigidBody()->velocity;
-			m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
+			//m_pPlayer->getRigidBody()->velocity *= m_pPlayer->getRigidBody()->velocity * 0.9f;
 		}
 		else if(!m_playerMoving)
 		{
